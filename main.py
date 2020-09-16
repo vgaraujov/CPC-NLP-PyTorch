@@ -27,7 +27,7 @@ from utils.seed import set_seed
 from utils.train import train, snapshot
 from utils.validation import validation
 from utils.dataset import BookCorpus
-from model.model import CPCv1
+from model.models import CPCv1
 
 ############ Control Center and Hyperparameter ###############
 config = box_from_file(Path('config_cpc.yaml'), file_type='yaml')
