@@ -80,9 +80,9 @@ cpc_model.load_state_dict(checkpoint['state_dict'])
 cpc_model.to(device)
 # Change Embedding layer with the expanded one
 if config.txt_classifier.expanded_vocab:
-    embeddings = np.load('word2vec_expansion/embeddings_expanded.npy')
+    embeddings = np.load('vocab_expansion/embeddings_expanded.npy')
     cpc_model.embedding = nn.Embedding.from_pretrained(torch.from_numpy(embeddings).float(), padding_idx=config.dataset_classifier.padding_idx).to(device)
-    config.dataset_classifier.vocab_file_path = 'word2vec_expansion/vocab_expanded.pkl'
+    config.dataset_classifier.vocab_file_path = 'vocab_expansion/vocab_cpc_expanded.pkl'
 # freeze weights    
 for param in cpc_model.parameters():
     param.requires_grad = False

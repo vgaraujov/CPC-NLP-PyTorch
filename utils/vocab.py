@@ -49,8 +49,7 @@ def save_dictionary(worddict, wordcount, loc='./data/book_dictionary_large.pkl')
 #         pkl.dump(wordcount, f)
 
 
-def build_and_save_dictionary(text, source, vocab_size):
-    save_loc = source + ".pkl"
+def build_and_save_dictionary(text, save_loc, vocab_size):
     try:
         cached = load_dictionary(save_loc)
         print("Using cached dictionary at {}".format(save_loc))

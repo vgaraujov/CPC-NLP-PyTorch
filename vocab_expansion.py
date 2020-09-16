@@ -14,7 +14,7 @@ from pathlib import Path
 from timeit import default_timer as timer
 
 ## Custom Imports
-from model.model import CPCv1
+from model.models import CPCv1
 from utils.vocab import *
 
 
@@ -71,7 +71,7 @@ def save_expansion(embedding_map, config):
     assert embeddings.shape[0] == len(embedding_map)
     # saving expanded files
     np.save('vocab_expansion/embeddings_expanded.npy', embeddings)
-    with open('vocab_expansion/vocab_expanded.pkl'.format(config.dataset.vocab_name), 'wb') as f:
+    with open('vocab_expansion/vocab_expanded.pkl', 'wb') as f:
         pkl.dump(vocab_dict, f)
     
 def main(run_name, word2vec_path):
@@ -91,8 +91,8 @@ def main(run_name, word2vec_path):
     skip_thoughts_emb = output.detach().cpu().numpy()
 
     # load original vocab dictionary
-    print("Loading CPC dictionary: {}".format(config.dataset.vocab_name))
-    skip_thoughts_vocab = load_dictionary(loc='{}/{}.pkl'.format(config.dataset.books_path, config.dataset.vocab_name))
+    print("Loading CPC dictionary")
+    skip_thoughts_vocab = load_dictionary(loc='vocab.pkl')
     assert len(skip_thoughts_vocab) == config.dataset.vocab_size
     
     # Load the Word2Vec model
@@ -109,8 +109,8 @@ if __name__ == "__main__":
     # Specify model and dictionary locations here
     #-----------------------------------------------------------------------------#
     run_name = "cpc-2020-09-13_12_32_03"
-    word2vec_path = "word2vec_model/GoogleNews-vectors-negative300.bin.gz"
-    Path("word2vec_expansion").mkdir(parents=True, exist_ok=True)
+    word2vec_path = "word2vec/GoogleNews-vectors-negative300.bin.gz"
+    Path("vocab_expansion").mkdir(parents=True, exist_ok=True)
     
     global_timer = timer() # global timer
     main(run_name, word2vec_path)

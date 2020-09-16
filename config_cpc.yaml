@@ -12,7 +12,6 @@ comet:
   previous_experiment: False
 dataset:
   books_path: '/user/vgaraujo/storage/Datasets/BookCorpusReady'
-  vocab_name: 'vocab_cpc'
   vocab_size: 20000
   window: 9
   max_sen_length: 32

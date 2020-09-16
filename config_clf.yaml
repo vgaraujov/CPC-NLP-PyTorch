@@ -12,9 +12,8 @@ txt_classifier:
   d_input: 2400
   n_class: 6
 dataset_classifier:
-  vocab_file_path: '/user/vgaraujo/storage/Datasets/BookCorpusReady/vocab_cpc.pkl'
   max_sen_length: 32
-  do_lower_case: False
+  do_lower_case: True
   padding_idx: 0
   unknown_idx: 1
 sentiment_analysis:

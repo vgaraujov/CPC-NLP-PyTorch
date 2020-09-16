@@ -21,7 +21,6 @@ class BookCorpus(data.Dataset):
         """
         # Hyperparameters
         self.books_path = config.dataset.books_path
-        self.vocab_name = config.dataset.vocab_name
         self.window = config.dataset.window
         self.do_lower_case = config.dataset.do_lower_case
         self.max_sen_length = config.dataset.max_sen_length
@@ -41,7 +40,7 @@ class BookCorpus(data.Dataset):
         # Load Tokenizer
         logger.info("Loading vocabulary")
         self.word_dict = build_and_save_dictionary(text=functools.reduce(operator.iconcat, self.examples, []),
-                                                   source='{}/{}'.format(self.books_path, self.vocab_name), 
+                                                   save_loc='vocab.pkl', 
                                                    vocab_size=config.dataset.vocab_size)
         self.word_dict_reversed = {v:k for k, v in self.word_dict.items()}
 
@@ -80,7 +79,6 @@ class SentimentAnalysis(data.Dataset):
         # Hyperparameters
         self.dataset_path = config.sentiment_analysis.dataset_path
         self.dataset_name = config.sentiment_analysis.dataset_name
-        self.vocab_file_path = config.dataset_classifier.vocab_file_path
         self.do_lower_case = config.dataset_classifier.do_lower_case
         self.max_sen_length = config.dataset_classifier.max_sen_length
         self.pad = config.dataset_classifier.padding_idx
@@ -91,10 +89,14 @@ class SentimentAnalysis(data.Dataset):
         self.data = [line.split(' ||| ')[1].strip() for line in raw_data]
         self.label = [line.split(' ||| ')[0] for line in raw_data]
         self.classes = len(set(self.label))
+        if config.txt_classifier.expanded_vocab:
+            vocab_file_path = 'vocab_expansion/vocab_expanded.pkl'
+        else:
+            vocab_file_path = 'vocab.pkl'
         # Load Tokenizer
         print('Loading vocabulary')
         try:
-            self.word_dict = load_dictionary(self.vocab_file_path)
+            self.word_dict = load_dictionary(vocab_file_path)
             self.word_dict_reversed = {v:k for k, v in self.word_dict.items()}
         except:
             print('You must have vocabulary dictionary of the BookCorpus dataset')
