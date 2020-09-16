@@ -4,7 +4,7 @@ This repository contains a PyTorch implementation of CPC v1 for Natural Language
 ](https://arxiv.org/abs/1807.03748).
 
 <p align="center"> 
-    <img src="images/cpc-model.png" width="500">
+    <img src="images/cpc-model.png" width="600">
 </p>
 
 ## Implementation Details
@@ -72,9 +72,9 @@ If you want to resume your model training, you just need to write the name of yo
 
 ## Results
 
-The model should be trained for 1e8 steps with a batch size of 64 * 8 GPUs. The authors gave me a snapshot of the first 1M training steps that you can find [here](https://github.com/vgaraujov/CPC-NLP-PyTorch/blob/master/images/deepmind-train-plot.png), and you can find the results of my implementation [here](https://github.com/vgaraujov/CPC-NLP-PyTorch/blob/master/images/varaujov-trian-plot.jpg). There is a slight difference which may be due to various factors such as data set or initialization.
+The model should be trained for 1e8 steps with a batch size of 64 * 8 GPUs. The authors provided me a snapshot of the first 1M training steps that you can find [here](https://github.com/vgaraujov/CPC-NLP-PyTorch/blob/master/images/deepmind-train-plot.png), and you can find the results of my implementation [here](https://github.com/vgaraujov/CPC-NLP-PyTorch/blob/master/images/varaujov-trian-plot.jpg). There is a slight difference which may be due to various factors such as dataset or initialization.
 
-If anyone can fully train the model, feel free to share your results with us.
+If anyone can fully train the model, feel free to share the results with us.
 
 ## References
 * [Representation Learning with Contrastive Predictive Coding
