@@ -38,10 +38,11 @@ else:
 # setup logger    
 global_timer = timer() # global timer
 logger = setup_logs(config.training.logging_dir, run_name) # setup logs
+logger.info('### Experiment {} ###'.format(run_name))
 logger.info('### Hyperparameter summary below ###\n {}'.format(config))
 # setup of comet_ml
 if has_comet:
-    logger.info('### Logging with comet_ml ###\n')
+    logger.info('### Logging with comet_ml ###')
     if config.comet.previous_experiment:
         logger.info('===> using existing experiment: {}'.format(config.comet.previous_experiment))
         experiment = comet_ml.ExistingExperiment(api_key=config.comet.api_key,
@@ -66,28 +67,16 @@ set_seed(config.training.seed, use_cuda)
         
 # create a CPC model for NLP
 model = CPCv1(config=config)
+# load model if resume mode
+if config.training.resume_name:
+    logger.info('===> loading a checkpoint')
+    checkpoint = torch.load('{}/{}-{}'.format(config.training.logging_dir, run_name,'model_best.pth'))
+    model.load_state_dict(checkpoint['state_dict'])
 # line for multi-gpu
 if config.training.multigpu and torch.cuda.device_count() > 1:
     logger.info("===> let's use {} GPUs!".format(torch.cuda.device_count()))
     model = nn.DataParallel(model)
-
-# load model if resume mode
-if config.training.resume_name:
-    logger.info('### Resume CPC training ###\n')
-    checkpoint = torch.load('{}/{}-{}'.format(config.training.logging_dir, run_name,'model_best.pth'))
-    if config.training.multigpu:    
-        # Adjust state_dict for single-gpu (when was trained on multi-gpu)
-        # 1. create new OrderedDict that does not contain `module.`
-        pretrained_dict = OrderedDict()
-        # 2. remove module by iterating the dict
-        for k, v in checkpoint['state_dict'].items():
-            name = k[7:] # remove `module.`
-            pretrained_dict[name] = v
-        # 3. load state_dict
-        cpc_model.load_state_dict(pretrained_dict)
-    else:
-        model.load_state_dict(checkpoint['state_dict'])
-
+# move to device
 model.to(device)
 
 ## Loading the dataset
@@ -129,7 +118,7 @@ if config.training.resume_name:
     optimizer.load_state_dict(checkpoint['optimizer'])
     
 model_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-logger.info('### Model summary below ###\n {}\n'.format(str(model)))
+logger.info('### Model summary below ###\n {}'.format(str(model)))
 logger.info('===> Model total parameter: {}\n'.format(model_params))
 if has_comet: experiment.set_model_graph(str(model))
 
@@ -147,7 +136,7 @@ else:
     step = 0
     initial_epoch = 1
 
-logger.info('### Training begins at epoch {} and step {}###\n'.format(initial_epoch,step))
+logger.info('### Training begins at epoch {} and step {} ###'.format(initial_epoch,step))
 for epoch in range(initial_epoch, config.training.epochs + 1):
     epoch_timer = timer()
     # Train and validate
@@ -171,12 +160,16 @@ for epoch in range(initial_epoch, config.training.epochs + 1):
     # Save
     if val_acc > best_acc: 
         best_acc = max(val_acc, best_acc)
+        if torch.cuda.device_count() > 1:
+            dict_to_save = model.module.state_dict()
+        else:
+            dict_to_save = model.state_dict()
         snapshot(config.training.logging_dir, run_name, {
             'epoch': epoch,
             'step_train': step,
             'validation_acc': val_acc,
             'validation_loss': val_loss,
-            'state_dict': model.state_dict(),
+            'state_dict': dict_to_save,
             'optimizer': optimizer.state_dict(),
         })
         best_epoch = epoch

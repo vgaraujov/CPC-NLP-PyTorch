@@ -1,5 +1,5 @@
 training:
-  logging_dir: '/your_logging_dir'
+  logging_dir: '/user/vgaraujo/storage/CPC-NLP-PyTorch/logs'
   log_interval: 100
   epochs: 10
   batch_size: 64
@@ -8,13 +8,14 @@ training:
   seed: 42
   resume_name: False
 comet:
-  api_key: 'your_api_key'
+  api_key: '6oPfzhw55BucwZ4m8rV62ppyw'
   previous_experiment: False
 dataset:
-  books_path: 'your_dataset_path'
+  books_path: '/user/vgaraujo/storage/Datasets/BookCorpusReady'
+  vocab_name: 'vocab_cpc'
+  vocab_size: 20000
   window: 9
   max_sen_length: 32
-  vocab_size: 20000
   do_lower_case: True
   padding_idx: 0
   unknown_idx: 1

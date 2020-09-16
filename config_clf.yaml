@@ -1,0 +1,22 @@
+training:
+  logging_dir: '/user/vgaraujo/storage/CPC-NLP-PyTorch/logs_clf'
+  epochs: 20
+  n_warmup_steps: 50
+  batch_size: 32
+  no_cuda: False
+  seed: 42
+  log_interval: 10
+txt_classifier:
+  cpc_path: '/home/vgaraujo/storage/CPC-NLP-PyTorch/logs/cpc-2020-09-13_12_32_03-model_best.pth'
+  expanded_vocab: True
+  d_input: 2400
+  n_class: 6
+dataset_classifier:
+  vocab_file_path: '/user/vgaraujo/storage/Datasets/BookCorpusReady/vocab_cpc.pkl'
+  max_sen_length: 32
+  do_lower_case: False
+  padding_idx: 0
+  unknown_idx: 1
+sentiment_analysis:
+  dataset_path: '/home/vgaraujo/storage/Datasets/Sentiment-Analysis'
+  dataset_name: 'TREC'

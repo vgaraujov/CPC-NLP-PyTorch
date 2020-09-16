@@ -48,3 +48,25 @@ def train(step, experiment, model, data_loader, device, optimizer, epoch, timest
                     final_loss, final_acc))
     
     return final_acc, final_loss, step
+
+
+def train_clf(cpc_model, clf_model, device, data_loader, optimizer, epoch, log_interval):
+    cpc_model.eval() # not training cpc model 
+    clf_model.train()
+    for batch_idx, [data, target] in enumerate(data_loader):
+        optimizer.zero_grad()
+        data = data.to(device)
+        target = target.to(device)
+        embedding = cpc_model.get_sentence_embedding(data)
+        output = clf_model.forward(embedding)
+        loss = F.cross_entropy(output, target)
+        loss.backward()
+        optimizer.step()
+        lr = optimizer.update_learning_rate()
+        pred = output.max(1, keepdim=True)[1] # get the index of the max log-probability
+        acc = 1.*pred.eq(target.view_as(pred)).sum().item()/len(data)
+        
+        if batch_idx % log_interval == 0:
+            logger.info('Train Epoch: {} [{}/{} ({:.0f}%)]\tlr:{:.5f}\tAccuracy: {:.4f}\tLoss: {:.6f}'.format(
+                epoch, batch_idx * len(data), len(data_loader.dataset),
+                100. * batch_idx / len(data_loader), lr, acc, loss.detach().item()))

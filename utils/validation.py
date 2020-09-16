@@ -32,3 +32,29 @@ def validation(step, experiment, model, data_loader, device, timestep):
                     final_loss, final_acc))
         
     return final_acc, final_loss
+
+
+def validation_clf(cpc_model, clf_model, device, data_loader):
+    logger.info("Starting Validation")
+    cpc_model.eval() # not training cdc model 
+    clf_model.eval()
+    total_loss = 0
+    total_acc  = 0 
+
+    with torch.no_grad():
+        for [data, target] in data_loader:
+            data = data.to(device)
+            target = target.to(device)
+            embedding = cpc_model.get_sentence_embedding(data)
+            output = clf_model.forward(embedding)
+            total_loss += F.cross_entropy(output, target, reduction='sum').item() # sum up batch loss
+            pred = output.max(1, keepdim=True)[1] # get the index of the max log-probability
+            total_acc += pred.eq(target.view_as(pred)).sum().item()
+
+    total_loss /= len(data_loader.dataset) # average loss
+    total_acc  /= 1.*len(data_loader.dataset) # average acc
+
+    logger.info('===> Validation set: Average loss: {:.4f}\tAccuracy: {:.4f}\n'.format(
+                total_loss, total_acc))
+
+    return total_acc, total_loss
