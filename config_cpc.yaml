@@ -1,0 +1,29 @@
+training:
+  logging_dir: '/your_logging_dir'
+  log_interval: 100
+  epochs: 10
+  batch_size: 64
+  no_cuda: False
+  multigpu: False
+  seed: 42
+  resume_name: False
+comet:
+  api_key: 'your_api_key'
+  previous_experiment: False
+dataset:
+  books_path: 'your_dataset_path'
+  window: 9
+  max_sen_length: 32
+  vocab_size: 20000
+  do_lower_case: True
+  padding_idx: 0
+  unknown_idx: 1
+  mini_dataset: False
+cpc_model:  
+  k_size: 3
+  emb_dim: 620
+  ar_type: 'gru'
+  ar_dim: 2400
+  enc_type: 'cnn'
+  enc_dim: 2400
+  
