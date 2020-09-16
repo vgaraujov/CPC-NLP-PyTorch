@@ -50,23 +50,6 @@ class CPCv1(nn.Module):
         # define predictive layer
         self.Wk  = nn.ModuleList([nn.Linear(self.enc_dimension, self.ar_dimension) for i in range(self.k_size)])
 
-        for m in self.modules():
-            if isinstance(m, nn.Conv1d):
-                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
-            elif isinstance(m, nn.Linear):
-                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
-            elif isinstance(m, (nn.BatchNorm2d, nn.GroupNorm, nn.LayerNorm)):
-                nn.init.constant_(m.weight, 1)
-                nn.init.constant_(m.bias, 0)
-            elif isinstance(m, (nn.GRUCell, nn.GRU)):
-                for name, param in m.named_parameters():
-                    if 'bias' in name:
-                         nn.init.constant_(param, 0.0)
-                    elif 'weight_ih' in name:
-                         nn.init.kaiming_normal_(param)
-                    elif 'weight_hh' in name:
-                         nn.init.orthogonal_(param)
-
     def init_hidden(self, batch_size, device = None):
         if device: return torch.zeros(1, batch_size, self.ar_dimension).to(device)
         else: return torch.zeros(1, batch_size, self.ar_dimension)
